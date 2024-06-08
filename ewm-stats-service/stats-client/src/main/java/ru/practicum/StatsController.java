@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class StatsController {
-    private final Client client;
+    private final StatsClient client;
     private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
