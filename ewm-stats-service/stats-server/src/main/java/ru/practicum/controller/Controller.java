@@ -20,8 +20,8 @@ public class Controller {
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
-    public HitDto addHit(@Valid @RequestBody HitDto hitDto) {
-        return service.addHit(hitDto);
+    public void addHit(@Valid @RequestBody HitDto hitDto) {
+        service.addHit(hitDto);
     }
 
     @GetMapping("/stats")

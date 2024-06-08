@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ru.practicum.controller.Controller;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,18 +37,12 @@ public class ControllerTest {
 
     @Test
     @SneakyThrows
-    void send_shouldSendData() {
-        when(service.addHit(any())).thenReturn(hit);
+    void shouldCallAddHitWithCorrectParameters() throws Exception {
         mvc.perform(post("/hit")
-                        .content(mapper.writeValueAsString(hit))
-                        .contentType(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(hit.getId()), Long.class))
-                .andExpect(jsonPath("$.app", is(hit.getApp())))
-                .andExpect(jsonPath("$.uri", is(hit.getUri())))
-                .andExpect(jsonPath("$.ip", is(hit.getIp())))
-                .andExpect(jsonPath("$.timestamp", is(hit.getTimestamp())));
+                .content(new ObjectMapper().writeValueAsString(hit))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+        verify(service, times(1)).addHit(any());
     }
 
     @Test
