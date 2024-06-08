@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface HitService {
 
-    HitDto post(HitDto hitDto);
+    HitDto addHit(HitDto hitDto);
 
     List<ViewStatsDto> getAll(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
 }

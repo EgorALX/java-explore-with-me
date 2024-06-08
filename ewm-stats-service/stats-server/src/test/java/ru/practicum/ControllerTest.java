@@ -37,7 +37,7 @@ public class ControllerTest {
     @Test
     @SneakyThrows
     void send_shouldSendData() {
-        when(service.post(any())).thenReturn(hit);
+        when(service.addHit(any())).thenReturn(hit);
         mvc.perform(post("/hit")
                         .content(mapper.writeValueAsString(hit))
                         .contentType(APPLICATION_JSON)

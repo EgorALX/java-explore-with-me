@@ -20,7 +20,7 @@ public class HitServiceImpl implements HitService {
     private final Mapper mapper;
 
     @Override
-    public HitDto post(HitDto hitDto) {
+    public HitDto addHit(HitDto hitDto) {
         Hit hit = mapper.toHit(hitDto);
         return mapper.toDto(repository.save(hit));
     }

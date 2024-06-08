@@ -21,7 +21,7 @@ public class Controller {
 
     @PostMapping("/hit")
     public HitDto addHit(@Valid @RequestBody HitDto hitDto) {
-        return service.post(hitDto);
+        return service.addHit(hitDto);
     }
 
     @GetMapping("/stats")
