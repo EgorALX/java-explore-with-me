@@ -1,16 +1,21 @@
 package ru.practicum;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
 
-@RequiredArgsConstructor
 public class BaseClient {
 
     private final RestTemplate restTemplate;
+
+    @Autowired
+    public BaseClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     protected <T> ResponseEntity<T> exchangePost(String path, T body, Class<T> responseType) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
