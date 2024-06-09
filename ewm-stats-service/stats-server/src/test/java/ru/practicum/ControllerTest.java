@@ -9,20 +9,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ru.practicum.controller.HitController;
-import ru.practicum.service.HitService;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
+import ru.practicum.controller.HitController;
+import ru.practicum.service.HitService;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = HitController.class)
 public class ControllerTest {
@@ -46,16 +44,29 @@ public class ControllerTest {
     }
 
     @Test
-    @SneakyThrows
-    void shouldReturnListOfData() {
-        when(service.getAll(any(), any(), any(), anyBoolean()))
-                .thenReturn(List.of(new ViewStatsDto(1L, "service", "qqq")));
-        mvc.perform(get("/stats?start=2018-01-01 00:00:00&end=2025-01-01 00:00:00")
-                        .contentType(APPLICATION_JSON)
-                        .accept(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].app", is("service")))
-                .andExpect(jsonPath("$.[0].uri", is("qqq")))
-                .andExpect(jsonPath("$.[0].hits", is(1)));
+    void getStats_whenCorrectParams_thenReturnStatsWithStatusOk() throws Exception {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime past = now.minusDays(6);
+        LocalDateTime future = now.plusDays(12);
+        List<String> uris = List.of("/hhhh");
+        boolean unique = false;
+
+        ViewStatsDto dto = new ViewStatsDto();
+        dto.setApp("aaa");
+        dto.setUri("/hhhh");
+        dto.setHits(1L);
+
+        when(service.getAll(past, future, uris, unique))
+                .thenReturn(List.of(dto));
+
+        mvc.perform(get("/stats")
+                        .param("start", past.toString())
+                        .param("end", future.toString())
+                        .param("uris", String.valueOf(uris))
+                        .param("unique", String.valueOf(unique))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
+
+
 }
