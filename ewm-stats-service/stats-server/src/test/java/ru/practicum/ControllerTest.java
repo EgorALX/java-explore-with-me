@@ -32,6 +32,7 @@ public class ControllerTest {
     private MockMvc mvc;
     private final HitDto hit = new HitDto(1L, "app", "aaa",
             "180.000.0.0", "2024-08-06 00:00:00");
+    private final ViewStatsDto response = new ViewStatsDto(1L, "aaa", "/ccc");
 
     @Test
     @SneakyThrows
@@ -44,26 +45,16 @@ public class ControllerTest {
     }
 
     @Test
-    void getStats_whenCorrectParams_thenReturnStatsWithStatusOk() throws Exception {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime past = now.minusDays(6);
-        LocalDateTime future = now.plusDays(12);
-        List<String> uris = List.of("/hhhh");
-        boolean unique = false;
-        ViewStatsDto dto = new ViewStatsDto();
-        dto.setApp("aaa");
-        dto.setUri("/hhhh");
-        dto.setHits(1L);
-        when(service.getAll(past, future, uris, unique))
-                .thenReturn(List.of(dto));
+    void BadRequestTest() throws Exception {
+        String eventStart = "3000-00-01 00:00:01";
+        String eventEnd = "1000-00-00 00:00:01";
+        List<String> uris = List.of("/ccc");
         mvc.perform(get("/stats")
-                        .param("start", past.toString())
-                        .param("end", future.toString())
+                        .param("start", eventStart)
+                        .param("end", eventEnd)
                         .param("uris", String.valueOf(uris))
-                        .param("unique", String.valueOf(unique))
+                        .param("unique", String.valueOf(false))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest());
     }
-
-
 }
