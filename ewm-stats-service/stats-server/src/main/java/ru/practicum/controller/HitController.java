@@ -13,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class Controller {
+public class HitController {
 
     private final HitService service;
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS";
 
     @PostMapping("/hit")
     public void addHit(@Valid @RequestBody HitDto hitDto) {

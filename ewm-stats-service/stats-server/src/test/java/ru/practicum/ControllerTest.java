@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ru.practicum.controller.Controller;
+import ru.practicum.controller.HitController;
 import ru.practicum.service.HitService;
 
 import java.util.List;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(controllers = Controller.class)
+@WebMvcTest(controllers = HitController.class)
 public class ControllerTest {
     @MockBean
     private HitService service;

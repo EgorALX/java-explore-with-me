@@ -1,5 +1,6 @@
 package ru.practicum.client;
 
+import org.springframework.http.ResponseEntity;
 import ru.practicum.HitDto;
 import ru.practicum.ViewStatsDto;
 
@@ -8,7 +9,10 @@ import java.util.List;
 
 public interface Client {
 
-    public void post(HitDto hitDto);
+    public void addHit(HitDto hitDto);
 
-    public List<ViewStatsDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique);
+    public ResponseEntity<Object> retrieveAllStats(LocalDateTime start,
+                                                   LocalDateTime end,
+                                                   List<String> uris,
+                                                   boolean unique);
 }

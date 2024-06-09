@@ -15,7 +15,7 @@ public class Mapper {
                 hitDto.getApp(),
                 hitDto.getUri(),
                 hitDto.getIp(),
-                LocalDateTime.parse(hitDto.getTimestamp(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                LocalDateTime.parse(hitDto.getTimestamp(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")));
     }
 
     public HitDto toDto(Hit hit) {
@@ -24,7 +24,6 @@ public class Mapper {
                 hit.getApp(),
                 hit.getUri(),
                 hit.getIp(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(hit.getTimestamp()));
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(hit.getTimestamp()));
     }
-
 }

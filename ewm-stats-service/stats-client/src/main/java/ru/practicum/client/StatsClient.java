@@ -1,51 +1,70 @@
 package ru.practicum.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
-import org.springframework.stereotype.Component;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.DefaultUriBuilderFactory;
+
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import ru.practicum.HitDto;
-import ru.practicum.ViewStatsDto;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-@Component
-public class StatsClient implements Client {
+@Service
+public class StatsClient {
 
-    private final RestTemplate restTemplate;
+    private static final String BASE_URL = "http://localhost:9090";
+    private static final String HIT_ENDPOINT = "/hit";
+    private static final String STATS_ENDPOINT = "/stats";
 
-    private static final String API_PREFIX = "/";
+    private final RestTemplate rest;
 
     @Autowired
-    public StatsClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public StatsClient(@Value(BASE_URL) String serverUrl,
+                       RestTemplateBuilder builder) {
+        this.rest =
+                builder
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                        .build();
     }
 
-    protected <T> ResponseEntity<T> exchangePost(String path, T body, Class<T> responseType) {
+    public ResponseEntity<Object> addHit(HitDto hitDto) {
+        return makeAndSendRequest(HttpMethod.POST, HIT_ENDPOINT, hitDto);
+    }
+
+    public ResponseEntity<Object> retrieveAllStats(LocalDateTime start, LocalDateTime end, List<String> uris,
+                                                   boolean unique) {
+        String urisParam = String.join("&uris=", uris);
+        String path = String.format("%s?start=%s&end=%s&uris=%s&unique=%s",
+                STATS_ENDPOINT, start, end, urisParam, unique);
+        return makeAndSendRequest(HttpMethod.GET, path, null);
+    }
+
+    private ResponseEntity<Object> get(String path) {
+        return makeAndSendRequest(HttpMethod.GET, path, null);
+    }
+
+    private <T> void post(T body) {
+        makeAndSendRequest(HttpMethod.POST, HIT_ENDPOINT, body);
+    }
+
+    private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
-        ResponseEntity<T> response = restTemplate.postForEntity(path, requestEntity, responseType);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Failed to post data: " + response.getBody());
-        }
-        return response;
-    }
 
-    protected <T> ResponseEntity<T> exchangeGet(String path, Map<String, Object> uriVariables, Class<T> responseType) {
-        UriComponentsBuilder builder = UriComponentsBuilder.fromPath(path)
-                .queryParam("start", uriVariables.get("start"))
-                .queryParam("end", uriVariables.get("end"))
-                .queryParam("uris", uriVariables.get("uris"))
-                .queryParam("unique", uriVariables.get("unique"));
-        ResponseEntity<T> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, new HttpEntity<>(null, defaultHeaders()), responseType);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Failed to get data: " + response.getBody());
+        try {
+            ResponseEntity<Object> statServerResponse = rest.exchange(path, method, requestEntity, Object.class);
+            return prepareClientResponse(statServerResponse);
+        } catch (HttpStatusCodeException e) {
+            throw new RuntimeException("Failed to send request to stats server", e);
         }
-        return response;
     }
 
     private HttpHeaders defaultHeaders() {
@@ -55,28 +74,10 @@ public class StatsClient implements Client {
         return headers;
     }
 
-    public void post(HitDto hitDto) {
-        exchangePost(API_PREFIX + "hits", hitDto, HitDto.class).getBody();
-    }
-
-    public List<ViewStatsDto> get(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        try {
-            Map<String, Object> uriVariables = new HashMap<>();
-            uriVariables.put("start", start.toLocalDate().toString());
-            uriVariables.put("end", end.toLocalDate().toString());
-            uriVariables.put("uris", uris);
-            uriVariables.put("unique", unique);
-
-            UriComponentsBuilder builder = UriComponentsBuilder.fromPath(API_PREFIX + "stats")
-                    .queryParam("start", "{start}")
-                    .queryParam("end", "{end}")
-                    .queryParam("uris", "{uris}")
-                    .queryParam("unique", "{unique}");
-
-            return exchangeGet(builder.toUriString(), uriVariables, List.class).getBody();
-        } catch (Exception e) {
-            return Collections.emptyList();
+    private static ResponseEntity<Object> prepareClientResponse(ResponseEntity<Object> response) {
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response;
         }
+        return ResponseEntity.ok(new ArrayList<>());
     }
-
 }
