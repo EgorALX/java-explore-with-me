@@ -44,7 +44,7 @@ public class ControllerTest {
     }
 
     @Test
-    void BadRequestTest() throws Exception {
+    void badRequestTest() throws Exception {
         String eventStart = "3000-00-01T00:00:01";
         String eventEnd = "1000-00-00T00:00:01";
         List<String> uris = List.of("/ccc");
