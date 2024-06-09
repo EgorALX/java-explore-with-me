@@ -2,7 +2,6 @@ package ru.practicum.client;
 
 import org.springframework.http.ResponseEntity;
 import ru.practicum.HitDto;
-import ru.practicum.ViewStatsDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
