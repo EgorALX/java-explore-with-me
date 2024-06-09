@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import ru.practicum.controller.HitController;
@@ -20,7 +19,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(controllers = HitController.class)
 public class ControllerTest {
@@ -31,7 +29,7 @@ public class ControllerTest {
     @Autowired
     private MockMvc mvc;
     private final HitDto hit = new HitDto(1L, "app", "aaa",
-            "180.000.0.0", "2024-08-06 00:00:00");
+            "180.000.0.0", "2024-08-06T00:00:00");
     private final ViewStatsDto response = new ViewStatsDto(1L, "aaa", "/ccc");
 
     @Test
@@ -46,8 +44,8 @@ public class ControllerTest {
 
     @Test
     void BadRequestTest() throws Exception {
-        String eventStart = "3000-00-01 00:00:01";
-        String eventEnd = "1000-00-00 00:00:01";
+        String eventStart = "3000-00-01T00:00:01";
+        String eventEnd = "1000-00-00T00:00:01";
         List<String> uris = List.of("/ccc");
         mvc.perform(get("/stats")
                         .param("start", eventStart)
