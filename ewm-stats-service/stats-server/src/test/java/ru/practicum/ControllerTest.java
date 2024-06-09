@@ -50,15 +50,12 @@ public class ControllerTest {
         LocalDateTime future = now.plusDays(12);
         List<String> uris = List.of("/hhhh");
         boolean unique = false;
-
         ViewStatsDto dto = new ViewStatsDto();
         dto.setApp("aaa");
         dto.setUri("/hhhh");
         dto.setHits(1L);
-
         when(service.getAll(past, future, uris, unique))
                 .thenReturn(List.of(dto));
-
         mvc.perform(get("/stats")
                         .param("start", past.toString())
                         .param("end", future.toString())
