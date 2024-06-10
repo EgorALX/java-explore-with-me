@@ -26,7 +26,6 @@ public class MainService {
         client.addHit(hitDto);
         ResponseEntity<Object> response = client.retrieveAllStats(stringNowPlusHour,
                 stringNowMinusHour, List.of("/aaa"), true);
-
         System.out.println(response.getBody());
 
         HitDto hitDto2 = new HitDto("appp", "/bbb", "ssss", LocalDateTime.now().plusMinutes(3));
@@ -34,7 +33,6 @@ public class MainService {
 
         response = client.retrieveAllStats(stringNowPlusHour,
                 stringNowMinusHour, List.of("/aaa", "/bbb"), false);
-
         System.out.println(response.getBody());
 
     }
