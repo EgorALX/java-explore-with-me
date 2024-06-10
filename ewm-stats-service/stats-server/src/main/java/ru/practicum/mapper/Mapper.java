@@ -15,15 +15,6 @@ public class Mapper {
                 hitDto.getApp(),
                 hitDto.getUri(),
                 hitDto.getIp(),
-                LocalDateTime.parse(hitDto.getTimestamp(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")));
-    }
-
-    public HitDto toDto(Hit hit) {
-        return new HitDto(
-                hit.getId(),
-                hit.getApp(),
-                hit.getUri(),
-                hit.getIp(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS").format(hit.getTimestamp()));
+                hitDto.getTimestamp());
     }
 }

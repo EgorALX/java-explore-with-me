@@ -17,7 +17,7 @@ public class HitController {
 
     private final HitService service;
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS";
+    private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
     public void addHit(@Valid @RequestBody HitDto hitDto) {
@@ -29,6 +29,9 @@ public class HitController {
                                                @RequestParam @DateTimeFormat(pattern = DATE_PATTERN) LocalDateTime end,
                                                @RequestParam(required = false) List<String> uris,
                                                @RequestParam(required = false, defaultValue = "false") Boolean unique) {
+        if (start.isAfter(end)) {
+            throw new RuntimeException("Start i after end");
+        }
         return service.getAll(start, end, uris, unique);
     }
 }

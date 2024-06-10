@@ -1,7 +1,6 @@
 package ru.practicum.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
@@ -13,7 +12,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import ru.practicum.HitDto;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,25 +25,24 @@ public class StatsClient {
     private final RestTemplate rest;
 
     @Autowired
-    public StatsClient(@Value(BASE_URL) String serverUrl,
-                       RestTemplateBuilder builder) {
+    public StatsClient(RestTemplateBuilder builder) {
         this.rest =
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(BASE_URL))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build();
     }
 
-    public ResponseEntity<Object> addHit(HitDto hitDto) {
-        return makeAndSendRequest(HttpMethod.POST, HIT_ENDPOINT, hitDto);
+    public void addHit(HitDto hitDto) {
+        post(hitDto);
     }
 
-    public ResponseEntity<Object> retrieveAllStats(LocalDateTime start, LocalDateTime end, List<String> uris,
+    public ResponseEntity<Object> retrieveAllStats(String start, String end, List<String> uris,
                                                    boolean unique) {
         String urisParam = String.join("&uris=", uris);
         String path = String.format("%s?start=%s&end=%s&uris=%s&unique=%s",
                 STATS_ENDPOINT, start, end, urisParam, unique);
-        return makeAndSendRequest(HttpMethod.GET, path, null);
+        return get(path);
     }
 
     private ResponseEntity<Object> get(String path) {

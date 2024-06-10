@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,10 +20,10 @@ public class HitDto {
     private String uri;
     @NotBlank
     private String ip;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 
-    private String timestamp;
-
-    public HitDto(String app, String uri, String ip, String timestamp) {
+    public HitDto(String app, String uri, String ip, LocalDateTime timestamp) {
         this.app = app;
         this.uri = uri;
         this.ip = ip;

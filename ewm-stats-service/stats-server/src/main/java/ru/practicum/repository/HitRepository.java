@@ -20,8 +20,8 @@ public interface HitRepository extends JpaRepository<Hit, Long> {
 
     @Query("SELECT new ru.practicum.ViewStatsDto(count(h.ip), h.app, h.uri) " +
             "FROM Hit AS h WHERE h.timestamp " +
-            "BETWEEN :start AND :end AND (COALESCE(:uris, null) is null or h.uri in :uris) " +
-            "GROUP BY h.app, h.uri ORDER BY COUNT(h.ip) desc")
+            "BETWEEN :start AND :end AND (COALESCE(:uris, null) IS NULL OR h.uri IN :uris) " +
+            "GROUP BY h.app, h.uri ORDER BY COUNT(h.ip) DESC")
     List<ViewStatsDto> findAll(@Param("start") LocalDateTime start,
                                @Param("end") LocalDateTime end,
                                @Param("uris") List<String> uris);

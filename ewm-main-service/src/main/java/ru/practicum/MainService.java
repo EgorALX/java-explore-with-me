@@ -1,15 +1,14 @@
 package ru.practicum;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import ru.practicum.client.StatsClient;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @SpringBootApplication
@@ -18,35 +17,25 @@ public class MainService {
 
     public static void main(String[] args) {
         SpringApplication.run(MainService.class, args);
-    }
+        StatsClient client = new StatsClient(new RestTemplateBuilder());
+        LocalDateTime now = LocalDateTime.now();
+        String stringNowPlusHour = now.minusHours(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String stringNowMinusHour = now.plusHours(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-    @Bean
-    public CommandLineRunner runner(ApplicationContext appContext) {
-        return args -> {
-            StatsClient statsClient = appContext.getBean(StatsClient.class);
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime past = now.minusDays(6);
-            LocalDateTime future = now.plusDays(12);
+        HitDto hitDto = new HitDto("app", "/aaa", "sss", LocalDateTime.now());
+        client.addHit(hitDto);
+        ResponseEntity<Object> response = client.retrieveAllStats(stringNowPlusHour,
+                stringNowMinusHour, List.of("/aaa"), true);
 
-            log.info("Testing hit saving...");
-            HitDto hitDto = createHitDto("aaa", "/test1", "100.0.0.1", now);
-            statsClient.addHit(hitDto);
+        System.out.println(response.getBody());
 
-            log.info("Retrieving statistics for the past hour...");
-            ResponseEntity<Object> response = statsClient.retrieveAllStats(past, future, List.of("/test1"), true);
-            log.info("Statistics response: {}", response);
+        HitDto hitDto2 = new HitDto("appp", "/bbb", "ssss", LocalDateTime.now().plusMinutes(3));
+        client.addHit(hitDto2);
 
-            log.info("Testing second hit saving...");
-            HitDto hitDto2 = createHitDto("aaa2", "/test2", "100.0.0.1", now);
-            statsClient.addHit(hitDto2);
+        response = client.retrieveAllStats(stringNowPlusHour,
+                stringNowMinusHour, List.of("/aaa", "/bbb"), false);
 
-            log.info("Retrieving non-unique hits statistics...");
-            response = statsClient.retrieveAllStats(past, future, List.of("/test1", "/test2"), false);
-            log.info("Non-unique statistics response: {}", response);
-        };
-    }
+        System.out.println(response.getBody());
 
-    private HitDto createHitDto(String appName, String uri, String ip, LocalDateTime timestamp) {
-        return new HitDto(appName, uri, ip, timestamp.toString());
     }
 }
