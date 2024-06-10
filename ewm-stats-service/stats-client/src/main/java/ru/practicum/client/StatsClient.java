@@ -39,9 +39,9 @@ public class StatsClient {
 
     public ResponseEntity<Object> retrieveAllStats(String start, String end, List<String> uris,
                                                    boolean unique) {
-        String urisParam = String.join("&uris=", uris);
+        String urisListParam = String.join("&uris=", uris);
         String path = String.format("%s?start=%s&end=%s&uris=%s&unique=%s",
-                STATS_ENDPOINT, start, end, urisParam, unique);
+                STATS_ENDPOINT, start, end, urisListParam, unique);
         return get(path);
     }
 
@@ -55,7 +55,6 @@ public class StatsClient {
 
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path, @Nullable T body) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
-
         try {
             ResponseEntity<Object> statServerResponse = rest.exchange(path, method, requestEntity, Object.class);
             return prepareClientResponse(statServerResponse);
