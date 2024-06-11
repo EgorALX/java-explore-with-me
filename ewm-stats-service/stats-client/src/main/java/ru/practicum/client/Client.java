@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Client {
 
-    public void addHit(HitDto hitDto);
+    void addHit(HitDto hitDto);
 
-    public List<ViewStatsDto> retrieveAllStats(String start, String end, List<String> uris, boolean unique);
+    List<ViewStatsDto> retrieveAllStats(String start, String end, List<String> uris, boolean unique);
 }
