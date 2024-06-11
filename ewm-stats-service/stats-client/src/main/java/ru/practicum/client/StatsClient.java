@@ -1,22 +1,24 @@
 package ru.practicum.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import ru.practicum.HitDto;
+import ru.practicum.ViewStatsDto;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class StatsClient {
+@Component
+public class StatsClient implements Client {
 
     private static final String BASE_URL = "http://localhost:9090";
     private static final String HIT_ENDPOINT = "/hit";
@@ -25,10 +27,10 @@ public class StatsClient {
     private final RestTemplate rest;
 
     @Autowired
-    public StatsClient(RestTemplateBuilder builder) {
+    public StatsClient(@Value("${statistic-server.url}") String baseUrl, RestTemplateBuilder builder) {
         this.rest =
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(BASE_URL))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(baseUrl))
                         .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                         .build();
     }
@@ -37,16 +39,17 @@ public class StatsClient {
         post(hitDto);
     }
 
-    public ResponseEntity<Object> retrieveAllStats(String start, String end, List<String> uris,
-                                                   boolean unique) {
+    public List<ViewStatsDto> retrieveAllStats(String start, String end, List<String> uris, boolean unique) {
         String urisListParam = String.join("&uris=", uris);
-        String path = String.format("%s?start=%s&end=%s&uris=%s&unique=%s",
+        String path = String.format("%s?start=%s&end=%s&uris=%s&unique=%b",
                 STATS_ENDPOINT, start, end, urisListParam, unique);
         return get(path);
     }
 
-    private ResponseEntity<Object> get(String path) {
-        return makeAndSendRequest(HttpMethod.GET, path, null);
+    private List<ViewStatsDto> get(String path) {
+        ResponseEntity<Object> response = makeAndSendRequest(HttpMethod.GET, path, null);
+        List<ViewStatsDto> dtos = (List<ViewStatsDto>) response.getBody();
+        return dtos;
     }
 
     private <T> void post(T body) {
