@@ -20,7 +20,6 @@ import java.util.List;
 @Component
 public class StatsClient implements Client {
 
-    private static final String BASE_URL = "http://localhost:9090";
     private static final String HIT_ENDPOINT = "/hit";
     private static final String STATS_ENDPOINT = "/stats";
 
