@@ -3,6 +3,7 @@ package ru.practicum.categories.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.categories.dto.NewCategoryDto;
@@ -15,11 +16,13 @@ import javax.validation.constraints.Positive;
 @RequiredArgsConstructor
 @RequestMapping("/admin/categories")
 @Slf4j
+@Validated
 public class CategoryAdminController {
 
     private final CategoryService categoryService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addCategory(@RequestBody @Valid NewCategoryDto dto) {
         log.info("Starting addCategory method");
         CategoryDto result = categoryService.addCategory(dto);

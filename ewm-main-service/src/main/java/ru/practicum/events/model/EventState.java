@@ -8,11 +8,7 @@ public enum EventState {
 
     PUBLISHED,
 
-    CANCELED,
-
-    REJECT_EVENT,
-
-    PUBLISH_EVENT;
+    CANCELED;
 
     public static Optional<EventState> of(String stringState) {
         for (EventState state : EventState.values()) {

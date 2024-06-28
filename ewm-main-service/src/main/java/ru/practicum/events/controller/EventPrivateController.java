@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.service.EventServiceImpl;
+import ru.practicum.exception.model.ValidationException;
 import ru.practicum.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.requests.dto.ParticipationRequestDto;
@@ -15,6 +16,7 @@ import ru.practicum.requests.dto.ParticipationRequestDto;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -43,6 +45,10 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto addEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
         log.info("Starting addEvent for userId: {}. Event data: {}", userId, dto);
+        if (dto.getEventDate() != null
+                && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+            throw new ValidationException("Date error");
+        }
         EventFullDto result = service.addEvent(userId, dto);
         log.info("Finished addEvent for userId: {}. Result: {}", userId, result);
         return result;
@@ -63,6 +69,10 @@ public class EventPrivateController {
             @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest
     ) {
         log.info("Starting updateEvent for userId: {}, eventId: {}. Request data: {}", userId, eventId, updateEventUserRequest);
+        if (updateEventUserRequest.getEventDate() != null
+                && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+            throw new ValidationException("Date error");
+        }
         EventFullDto result = service.updateEvent(userId, eventId, updateEventUserRequest);
         log.info("Finished updateEvent for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
         return result;

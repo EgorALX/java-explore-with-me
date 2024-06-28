@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
+@ToString
 @Setter
 @Table(name = "categories")
 @AllArgsConstructor

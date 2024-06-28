@@ -11,5 +11,5 @@ public class CountDto {
 
     private Long id;
 
-    private Integer count;
+    private Long count;
 }

@@ -1,11 +1,16 @@
 package ru.practicum.events.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import ru.practicum.events.model.EventState;
-import ru.practicum.events.model.Location;
+import ru.practicum.events.model.EventStatus;
+import ru.practicum.location.dto.LocationDto;
+
+import javax.validation.constraints.Future;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -22,9 +27,11 @@ public class UpdateEventAdminRequest {
     @Length(min = 20, max = 7000)
     private String description;
 
-    private String eventDate;
+    @Future
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime eventDate;
 
-    private Location location;
+    private LocationDto location;
 
     private Boolean paid;
 
@@ -32,7 +39,7 @@ public class UpdateEventAdminRequest {
 
     private Boolean requestModeration;
 
-    private EventState stateAction;
+    private EventStatus stateAction;
 
     @Length(min = 3, max = 120)
     private String title;

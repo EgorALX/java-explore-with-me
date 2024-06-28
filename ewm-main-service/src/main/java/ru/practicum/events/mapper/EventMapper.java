@@ -9,8 +9,8 @@ import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.Event;
-import ru.practicum.events.model.Location;
-import ru.practicum.events.repository.LocationRepository;
+import ru.practicum.location.model.Location;
+import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.exception.model.NotFoundException;
 import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.mapper.UserMapper;
@@ -55,7 +55,7 @@ public class EventMapper {
                 dto.getAnnotation(),
                 category,
                 dto.getDescription(),
-                LocalDateTime.parse(dto.getEventDate(), formatter),
+                dto.getEventDate(),
                 location,
                 dto.getPaid(),
                 dto.getParticipantLimit(),
@@ -63,7 +63,7 @@ public class EventMapper {
                 dto.getTitle());
     }
 
-    public EventFullDto eventToFullDto(Event event, Integer confirmedRequests, Long views) {
+    public EventFullDto eventToFullDto(Event event, Long confirmedRequests, Long views) {
         String publishedOn = null;
         if (event.getPublishedOn() != null) {
             publishedOn = event.getPublishedOn().format(formatter);
@@ -103,11 +103,11 @@ public class EventMapper {
 
     public List<EventShortDto> toEventShortDtoList(List<Event> events,
                                                    Map<Long, Long> viewStatMap,
-                                                   Map<Long, Integer> confirmedRequests) {
+                                                   Map<Long, Long> confirmedRequests) {
         List<EventShortDto> dtos = new ArrayList<>();
         for (Event event : events) {
             Long views = viewStatMap.getOrDefault(event.getId(), 0L);
-            Integer confirmedRequestsCount = confirmedRequests.getOrDefault(event.getId(), 0);
+            Long confirmedRequestsCount = confirmedRequests.getOrDefault(event.getId(), 0L);
             dtos.add(new EventShortDto(
                     event.getAnnotation(),
                     categoryMapper.toCategoryDto(event.getCategory()),
@@ -172,7 +172,7 @@ public class EventMapper {
         return null;
     }
 
-    private Integer getConfirmedRequestsForEvent(Long eventId) {
+    private Long getConfirmedRequestsForEvent(Long eventId) {
         if (eventId == null || eventId <= 0) {
             return null;
         }

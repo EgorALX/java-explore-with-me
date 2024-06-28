@@ -1,9 +1,6 @@
 package ru.practicum.compilations.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import ru.practicum.events.model.Event;
 
 import javax.persistence.*;
@@ -16,6 +13,7 @@ import java.util.List;
 @Table(name = "compilations")
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

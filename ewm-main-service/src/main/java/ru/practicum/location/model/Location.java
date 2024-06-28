@@ -1,4 +1,4 @@
-package ru.practicum.events.model;
+package ru.practicum.location.model;
 
 import lombok.*;
 

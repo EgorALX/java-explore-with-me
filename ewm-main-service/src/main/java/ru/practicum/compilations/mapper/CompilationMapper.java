@@ -2,7 +2,6 @@ package ru.practicum.compilations.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.client.StatsClient;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.compilations.model.Compilation;
@@ -19,8 +18,6 @@ import java.util.stream.Collectors;
 public class CompilationMapper {
 
     private final EventRepository eventRepository;
-
-    private final StatsClient statsClient;
 
     private final EventMapper eventMapper;
 

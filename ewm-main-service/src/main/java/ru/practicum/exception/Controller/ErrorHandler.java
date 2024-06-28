@@ -1,6 +1,8 @@
 package ru.practicum.exception.Controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,10 +41,18 @@ public class ErrorHandler {
         return new ApiError(exception, exception.getMessage(), "Data not found", HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({DataAccessException.class, DataIntegrityViolationException.class})
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(final RuntimeException exception) {
+        log.error("Exception: ", exception);
+        return new ApiError(exception, exception.getMessage(), "Conflict error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleException(final Exception exception) {
         log.error("Exception: ", exception);
         return new ApiError(exception, exception.getMessage(), "Server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

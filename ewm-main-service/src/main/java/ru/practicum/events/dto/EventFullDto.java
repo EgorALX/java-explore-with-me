@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.events.model.EventState;
-import ru.practicum.events.model.Location;
+import ru.practicum.location.model.Location;
 import ru.practicum.users.dto.UserShortDto;
 
 @Data
@@ -41,7 +41,7 @@ public class EventFullDto {
 
     private Boolean requestModeration;
 
-    private Integer confirmedRequests;
+    private Long confirmedRequests;
 
     private String publishedOn;
 

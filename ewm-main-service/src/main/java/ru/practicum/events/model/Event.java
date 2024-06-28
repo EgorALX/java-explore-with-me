@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.categories.model.Category;
+import ru.practicum.location.model.Location;
 import ru.practicum.users.model.User;
 
 import javax.persistence.*;
@@ -89,4 +90,5 @@ public class Event {
         this.requestModeration = requestModeration;
         this.title = title;
     }
+
 }

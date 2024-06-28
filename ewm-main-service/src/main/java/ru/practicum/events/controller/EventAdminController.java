@@ -1,5 +1,6 @@
 package ru.practicum.events.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,7 @@ import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.UpdateEventAdminRequest;
 import ru.practicum.events.model.EventState;
 import ru.practicum.events.service.EventServiceImpl;
+import ru.practicum.exception.model.ValidationException;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
@@ -18,15 +20,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/events")
 @Slf4j
+@RequiredArgsConstructor
 public class EventAdminController {
 
-    private EventServiceImpl service;
+    private final EventServiceImpl service;
 
     @GetMapping
     public List<EventFullDto> getEvents(
-            @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false) List<String> states,
-            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(defaultValue = "") List<Long> users,
+            @RequestParam(defaultValue = "") List<String> states,
+            @RequestParam(defaultValue = "") List<Long> categories,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
@@ -53,6 +56,10 @@ public class EventAdminController {
     public EventFullDto update(@PathVariable Long eventId,
                                @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
         log.info("Starting update for eventId: {}. Update request: {}", eventId, updateEventAdminRequest);
+        if (updateEventAdminRequest.getEventDate() != null
+                && updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
+            throw new ValidationException("Date error");
+        }
         EventFullDto updatedEvent = service.adminUpdate(eventId, updateEventAdminRequest);
         log.info("Finished update for eventId: {}. Updated event: {}", eventId, updatedEvent);
         return updatedEvent;

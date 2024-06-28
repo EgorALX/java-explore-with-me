@@ -38,11 +38,9 @@ public class EventPublicController {
             HttpServletRequest request) {
         log.info("Starting getAllPublished. Parameters: text={}, categories={}, paid={}, rangeStart={}, rangeEnd={}, onlyAvailable={}, sort={}, from={}, size={}",
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-
         if (rangeStart!= null && rangeEnd!= null && rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("Date exception");
         }
-
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
         List<EventShortDto> events = service.getAllPublished(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort,

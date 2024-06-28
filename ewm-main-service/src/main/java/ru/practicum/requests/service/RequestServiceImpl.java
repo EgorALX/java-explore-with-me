@@ -2,6 +2,7 @@ package ru.practicum.requests.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exception.model.NotFoundException;
@@ -33,6 +34,8 @@ public class RequestServiceImpl implements RequestService {
 
     private final RequestMapper requestMapper;
 
+    private final EventMapper eventMapper;
+
     @Override
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
         User user = userRepository.findById(userId)
@@ -47,6 +50,10 @@ public class RequestServiceImpl implements RequestService {
         }
         if (requestRepository.existsByEventAndRequester(event, user)) {
             throw new ViolationException("Unable to make a request");
+        }
+        Long count = requestRepository.countByEventIdAndStatus(eventId, CONFIRMED);
+        if (event.getParticipantLimit() > 0 && event.getParticipantLimit() <= count) {
+            throw new ViolationException("Limit of requests reached");
         }
         Request request = new Request();
         request.setCreated(LocalDateTime.now());

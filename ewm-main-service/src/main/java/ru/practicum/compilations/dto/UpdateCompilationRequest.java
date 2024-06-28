@@ -12,7 +12,8 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class UpdateCompilationRequest {
 
-    private List<Long> events;
+    @Builder.Default
+    private List<Long> events = List.of();
 
     private Boolean pinned;
 

@@ -1,12 +1,14 @@
 package ru.practicum.events.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.events.model.Location;
+import ru.practicum.location.model.Location;
 
 import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -21,10 +23,14 @@ public class NewEventDto {
     private Long category;
 
     @NotBlank
+    @NotBlank
+    @Size(min = 20, max = 7000)
     private String description;
 
-    @NotBlank
-    private String eventDate;
+    @Future
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime eventDate;
 
     @NotNull
     private Location location;
