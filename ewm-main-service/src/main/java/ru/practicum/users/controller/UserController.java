@@ -36,7 +36,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@RequestBody @Valid NewUserRequest newUserDTO) {
-        log.info("Response POST on {}", newUserDTO );
+        log.info("Response POST on {}", newUserDTO);
         return userService.addUser(newUserDTO);
     }
 
@@ -45,5 +45,4 @@ public class UserController {
     public void deleteUser(@PathVariable @Positive Long userId) {
         userService.deleteUser(userId);
     }
-
 }

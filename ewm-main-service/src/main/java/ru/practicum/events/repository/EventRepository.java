@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.events.model.Event;
 
 import java.util.List;
+
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 

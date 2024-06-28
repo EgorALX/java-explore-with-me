@@ -1,6 +1,5 @@
 package ru.practicum.events.service;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -209,8 +208,8 @@ public class EventServiceImpl implements EventService {
         if (participantLimit < countOfParticipant) {
             throw new ViolationException("exceeding the participant limit");
         }
-        List<Request> updatedRequests = requestRepository.
-                findAllByIdInAndStatusIs(statusUpdateRequest.getRequestIds(), Status.PENDING);
+        List<Request> updatedRequests = requestRepository
+                .findAllByIdInAndStatusIs(statusUpdateRequest.getRequestIds(), Status.PENDING);
         if (updatedRequests.size() < statusUpdateRequest.getRequestIds().size()) {
             throw new ViolationException("Status cannot be changed");
         }

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import ru.practicum.events.model.EventState;
 import ru.practicum.events.model.EventStatus;
 import ru.practicum.location.dto.LocationDto;
 
