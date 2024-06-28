@@ -201,7 +201,7 @@ public class EventServiceImpl implements EventService {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));
-        Integer participantLimit = event.getParticipantLimit();
+        Long participantLimit = event.getParticipantLimit();
         List<Event> events = List.of(event);
         Map<Long, Long> confirmed = getConfirmedRequests(events);
         Long countOfParticipant = confirmed.getOrDefault(eventId, 0L);

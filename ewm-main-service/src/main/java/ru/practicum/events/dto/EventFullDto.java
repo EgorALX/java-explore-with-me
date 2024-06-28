@@ -31,7 +31,7 @@ public class EventFullDto {
 
     private String description;
 
-    private Integer participantLimit;
+    private Long participantLimit;
 
     private EventState state;
 

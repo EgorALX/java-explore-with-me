@@ -34,7 +34,7 @@ public class UpdateEventAdminRequest {
 
     private Boolean paid;
 
-    private Integer participantLimit;
+    private Long participantLimit;
 
     private Boolean requestModeration;
 

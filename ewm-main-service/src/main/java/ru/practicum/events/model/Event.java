@@ -52,7 +52,7 @@ public class Event {
     private Boolean paid;
 
     @Column(name = "participant_limit")
-    private Integer participantLimit;
+    private Long participantLimit;
 
     @Column(name = "published_on")
     private LocalDateTime publishedOn;
@@ -75,7 +75,7 @@ public class Event {
                  LocalDateTime eventDate,
                  Location location,
                  Boolean paid,
-                 Integer participantLimit,
+                 Long participantLimit,
                  Boolean requestModeration,
                  String title) {
         this.id = id;
