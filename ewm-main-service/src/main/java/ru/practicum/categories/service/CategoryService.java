@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface CategoryService {
 
-    CategoryDto addCategory(NewCategoryDto dto);
+    CategoryDto add(NewCategoryDto dto);
 
-    void deleteCategory(Long catId);
+    void delete(Long catId);
 
-    CategoryDto updateCategory(Long catId, NewCategoryDto newCategoryDTO);
+    CategoryDto update(Long catId, NewCategoryDto newCategoryDTO);
 
-    CategoryDto getCategory(Long catId);
+    CategoryDto getById(Long catId);
 
-    List<CategoryDto> getAllCategories(PageRequest pageRequest);
+    List<CategoryDto> getAll(PageRequest pageRequest);
 }

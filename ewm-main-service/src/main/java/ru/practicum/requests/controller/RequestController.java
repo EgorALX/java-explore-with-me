@@ -20,8 +20,8 @@ public class RequestController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ParticipationRequestDto addRequest(@PathVariable @Positive Long userId,
-                                              @RequestParam @Positive Long eventId) {
+    public ParticipationRequestDto add(@PathVariable @Positive Long userId,
+                                       @RequestParam @Positive Long eventId) {
         log.info("Starting addRequest for userId: {}, eventId: {}", userId, eventId);
         ParticipationRequestDto participationRequestDto = requestService.addRequest(userId, eventId);
         log.info("Request added successfully for userId: {}, eventId: {}", userId, eventId);
@@ -29,7 +29,7 @@ public class RequestController {
     }
 
     @GetMapping
-    public List<ParticipationRequestDto> getRequests(@PathVariable @Positive Long userId) {
+    public List<ParticipationRequestDto> getAll(@PathVariable @Positive Long userId) {
         log.info("Starting getRequests for userId: {}", userId);
         List<ParticipationRequestDto> requests = requestService.getAllRequests(userId);
         log.info("Fetched {} requests for userId: {}", requests.size(), userId);
@@ -37,8 +37,8 @@ public class RequestController {
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestDto cancelRequest(@PathVariable @Positive Long userId,
-                                    @PathVariable @Positive Long requestId) {
+    public ParticipationRequestDto cancel(@PathVariable @Positive Long userId,
+                                          @PathVariable @Positive Long requestId) {
         log.info("Starting cancelRequest for userId: {}, requestId: {}", userId, requestId);
         ParticipationRequestDto participationRequestDto = requestService.cancelRequest(userId, requestId);
         log.info("Request cancelled successfully for userId: {}, requestId: {}", userId, requestId);

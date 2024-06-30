@@ -23,26 +23,26 @@ public class CategoryAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addCategory(@RequestBody @Valid NewCategoryDto dto) {
+    public CategoryDto add(@RequestBody @Valid NewCategoryDto dto) {
         log.info("Starting addCategory method");
-        CategoryDto result = categoryService.addCategory(dto);
+        CategoryDto result = categoryService.add(dto);
         log.info("Successfully added category");
         return result;
     }
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable @Positive Long catId) {
+    public void delete(@PathVariable @Positive Long catId) {
         log.info("Starting deleteCategory method for categoryId: {}", catId);
-        categoryService.deleteCategory(catId);
+        categoryService.delete(catId);
         log.info("Successfully deleted category with id: {}", catId);
     }
 
     @PatchMapping("/{catId}")
-    public CategoryDto updateCategory(@RequestBody @Valid NewCategoryDto newCategoryDTO,
-                                      @PathVariable @Positive Long catId) {
+    public CategoryDto update(@RequestBody @Valid NewCategoryDto newCategoryDTO,
+                              @PathVariable @Positive Long catId) {
         log.info("Starting updateCategory method for categoryId: {}", catId);
-        CategoryDto result = categoryService.updateCategory(catId, newCategoryDTO);
+        CategoryDto result = categoryService.update(catId, newCategoryDTO);
         log.info("Successfully updated category with id: {}", catId);
         return result;
     }

@@ -17,16 +17,16 @@ public interface EventService {
 
     List<EventShortDto> getEventsByUser(Long userId, PageRequest pageRequest);
 
-    EventFullDto addEvent(Long userId, NewEventDto eventDto);
+    EventFullDto add(Long userId, NewEventDto eventDto);
 
     EventFullDto getByUserAndEvent(Long userId, @PathVariable Long eventId);
 
-    EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateDto);
+    EventFullDto update(Long userId, Long eventId, UpdateEventUserRequest updateDto);
 
     List<ParticipationRequestDto> getRequestsByUserAndEvent(Long userId, @PathVariable Long eventId);
 
-    EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId,
-                                                       EventRequestStatusUpdateRequest statusUpdateRequest);
+    EventRequestStatusUpdateResult updateStatus(Long userId, Long eventId,
+                                                EventRequestStatusUpdateRequest statusUpdateRequest);
 
     List<EventFullDto> getEvents(List<Long> users, List<EventState> statesList, List<Long> categories, LocalDateTime rangeStart,
                                  LocalDateTime rangeEnd, PageRequest pageRequest);

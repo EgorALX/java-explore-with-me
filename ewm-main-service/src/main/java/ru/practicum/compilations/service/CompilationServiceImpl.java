@@ -32,7 +32,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompilationDto> getCompilations(Boolean pined, PageRequest pageRequest) {
+    public List<CompilationDto> getAll(Boolean pined, PageRequest pageRequest) {
         List<Compilation> compilations;
         if (pined == null) {
             compilations = compilationRepository.findAll(pageRequest).toList();
@@ -44,7 +44,7 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional(readOnly = true)
-    public CompilationDto getCompilation(Long compId) {
+    public CompilationDto getById(Long compId) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
         return compilationMapper.toCompilationDto(compilation);
@@ -52,21 +52,21 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto addCompilation(NewCompilationDto dto) {
+    public CompilationDto add(NewCompilationDto dto) {
         Compilation compilation = compilationMapper.toCompilation(dto);
         return compilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
     @Override
     @Transactional
-    public void deleteCompilation(Long compId) {
+    public void delete(Long compId) {
         compilationRepository.findById(compId).orElseThrow(() -> new NotFoundException("Compilation not found"));
         compilationRepository.deleteById(compId);
     }
 
     @Override
     @Transactional
-    public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest dto) {
+    public CompilationDto update(Long compId, UpdateCompilationRequest dto) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
         List<Event> events = eventRepository.findAllByIdIn(dto.getEvents());

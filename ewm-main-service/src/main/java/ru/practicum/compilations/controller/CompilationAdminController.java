@@ -23,26 +23,26 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto addCompilation(@RequestBody @Valid NewCompilationDto dto) {
-        log.info("Starting addCompilation");
-        CompilationDto result = service.addCompilation(dto);
+    public CompilationDto add(@RequestBody @Valid NewCompilationDto dto) {
+        log.info("Starting add");
+        CompilationDto result = service.add(dto);
         log.info("Compilation added successfully");
         return result;
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompilation(@PathVariable Long compId) {
-        log.info("Starting deleteCompilation for compId: {}", compId);
-        service.deleteCompilation(compId);
+    public void delete(@PathVariable Long compId) {
+        log.info("Starting delete for compId: {}", compId);
+        service.delete(compId);
         log.info("Compilation deleted successfully for compId: {}", compId);
     }
 
 
     @PatchMapping("/{compId}")
-    public CompilationDto updateCompilation(@PathVariable Long compId, @RequestBody @Valid UpdateCompilationRequest dto) {
-        log.info("Starting updateCompilation for compId: {} with request: {}", compId, dto);
-        CompilationDto result = service.updateCompilation(compId, dto);
+    public CompilationDto update(@PathVariable Long compId, @RequestBody @Valid UpdateCompilationRequest dto) {
+        log.info("Starting update for compId: {} with request: {}", compId, dto);
+        CompilationDto result = service.update(compId, dto);
         log.info("Compilation updated successfully for compId: {}", compId);
         return result;
     }

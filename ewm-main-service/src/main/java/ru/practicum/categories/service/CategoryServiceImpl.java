@@ -22,20 +22,20 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Override
-    public CategoryDto addCategory(NewCategoryDto dto) {
+    public CategoryDto add(NewCategoryDto dto) {
         Category category = categoryMapper.toCategory(dto);
         Category newCategory = categoryRepository.save(category);
         return categoryMapper.toCategoryDto(newCategory);
     }
 
     @Override
-    public void deleteCategory(Long catId) {
+    public void delete(Long catId) {
         categoryRepository.findById(catId).orElseThrow(() -> new NotFoundException("Category " + catId + " not found"));
         categoryRepository.deleteById(catId);
     }
 
     @Override
-    public CategoryDto updateCategory(Long catId, NewCategoryDto newCategoryDTO) {
+    public CategoryDto update(Long catId, NewCategoryDto newCategoryDTO) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category " + catId + " not found"));
         category.setName(newCategoryDTO.getName());
@@ -44,14 +44,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategory(Long catId) {
+    public CategoryDto getById(Long catId) {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Category " + catId + " not found"));
         return categoryMapper.toCategoryDto(category);
     }
 
     @Override
-    public List<CategoryDto> getAllCategories(PageRequest pageRequest) {
+    public List<CategoryDto> getAll(PageRequest pageRequest) {
         List<Category> categories = categoryRepository.findAll(pageRequest).toList();
         return categories.stream().map(categoryMapper::toCategoryDto).collect(Collectors.toList());
     }

@@ -25,24 +25,31 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam(defaultValue = "") List<Long> ids,
-                                  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                  @RequestParam(defaultValue = "10") @Positive int size) {
+    public List<UserDto> getAll(@RequestParam(defaultValue = "") List<Long> ids,
+                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                @RequestParam(defaultValue = "10") @Positive int size) {
+        log.info("Starting getAll");
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        return userService.getUsers(ids, pageRequest);
+        List<UserDto> users = userService.getAll(ids, pageRequest);
+        log.info("Completed getAll method successfully");
+        return users;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addUser(@RequestBody @Valid NewUserRequest newUserDTO) {
-        log.info("Response POST on {}", newUserDTO);
-        return userService.addUser(newUserDTO);
+    public UserDto add(@RequestBody @Valid NewUserRequest newUserDTO) {
+        log.info("Starting add");
+        UserDto userDto = userService.add(newUserDTO);
+        log.info("Completed add successfully");
+        return userDto;
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable @Positive Long userId) {
-        userService.deleteUser(userId);
+    public void delete(@PathVariable @Positive Long userId) {
+        log.info("Starting delete");
+        userService.delete(userId);
+        log.info("Completed delete successfully");
     }
 }

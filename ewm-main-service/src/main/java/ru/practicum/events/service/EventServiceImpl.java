@@ -83,7 +83,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto addEvent(Long userId, NewEventDto eventDto) {
+    public EventFullDto add(Long userId, NewEventDto eventDto) {
         Long categoryId = eventDto.getCategory();
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
@@ -111,7 +111,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public EventFullDto updateEvent(Long userId, Long eventId, UpdateEventUserRequest updateDto) {
+    public EventFullDto update(Long userId, Long eventId, UpdateEventUserRequest updateDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         Event event = eventRepository.findById(eventId)
@@ -196,8 +196,8 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     @Override
-    public EventRequestStatusUpdateResult updateRequestStatus(Long userId, Long eventId,
-                                                              EventRequestStatusUpdateRequest statusUpdateRequest) {
+    public EventRequestStatusUpdateResult updateStatus(Long userId, Long eventId,
+                                                       EventRequestStatusUpdateRequest statusUpdateRequest) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));

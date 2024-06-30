@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getUsers(List<Long> ids, PageRequest pageRequest) {
+    public List<UserDto> getAll(List<Long> ids, PageRequest pageRequest) {
         List<User> users;
         if (ids.isEmpty()) {
             users = userRepository.findAll(pageRequest).stream().collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto addUser(NewUserRequest dto) {
+    public UserDto add(NewUserRequest dto) {
         User user = userMapper.toUser(dto);
         User newUser = userRepository.save(user);
         return userMapper.toDto(newUser);
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
+    public void delete(Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         userRepository.deleteById(userId);
     }

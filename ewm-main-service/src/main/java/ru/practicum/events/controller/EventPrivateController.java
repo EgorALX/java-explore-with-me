@@ -43,14 +43,14 @@ public class EventPrivateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventFullDto addEvent(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
-        log.info("Starting addEvent for userId: {}. Event data: {}", userId, dto);
+    public EventFullDto add(@PathVariable Long userId, @Valid @RequestBody NewEventDto dto) {
+        log.info("Starting add for userId: {}. Event data: {}", userId, dto);
         if (dto.getEventDate() != null
                 && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("Date error");
         }
-        EventFullDto result = service.addEvent(userId, dto);
-        log.info("Finished addEvent for userId: {}. Result: {}", userId, result);
+        EventFullDto result = service.add(userId, dto);
+        log.info("Finished add for userId: {}. Result: {}", userId, result);
         return result;
     }
 
@@ -63,17 +63,17 @@ public class EventPrivateController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto updateEvent(
+    public EventFullDto update(
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest
     ) {
-        log.info("Starting updateEvent for userId: {}, eventId: {}. Request data: {}", userId, eventId, updateEventUserRequest);
+        log.info("Starting update for userId: {}, eventId: {}. Request data: {}", userId, eventId, updateEventUserRequest);
         if (updateEventUserRequest.getEventDate() != null
                 && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("Date error");
         }
-        EventFullDto result = service.updateEvent(userId, eventId, updateEventUserRequest);
+        EventFullDto result = service.update(userId, eventId, updateEventUserRequest);
         log.info("Finished updateEvent for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
         return result;
     }
@@ -87,13 +87,13 @@ public class EventPrivateController {
     }
 
     @PatchMapping("/{eventId}/requests")
-    public EventRequestStatusUpdateResult updateRequestStatus(
+    public EventRequestStatusUpdateResult updateStatus(
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @RequestBody @Valid EventRequestStatusUpdateRequest statusUpdateRequest) {
-        log.info("Starting updateRequestStatus for userId: {}, eventId: {}. Status update request: {}", userId, eventId, statusUpdateRequest);
-        EventRequestStatusUpdateResult result = service.updateRequestStatus(userId, eventId, statusUpdateRequest);
-        log.info("Finished updateRequestStatus for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
+        log.info("Starting updateStatus for userId: {}, eventId: {}. Status update request: {}", userId, eventId, statusUpdateRequest);
+        EventRequestStatusUpdateResult result = service.updateStatus(userId, eventId, statusUpdateRequest);
+        log.info("Finished updateStatus for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
         return result;
     }
 }

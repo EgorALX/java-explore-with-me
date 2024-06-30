@@ -26,7 +26,7 @@ public class EventAdminController {
     private final EventServiceImpl service;
 
     @GetMapping
-    public List<EventFullDto> getEvents(
+    public List<EventFullDto> getAll(
             @RequestParam(defaultValue = "") List<Long> users,
             @RequestParam(defaultValue = "") List<String> states,
             @RequestParam(defaultValue = "") List<Long> categories,
@@ -35,7 +35,7 @@ public class EventAdminController {
             @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
             @RequestParam(value = "size", defaultValue = "10", required = false) Integer size
     ) {
-        log.info("Starting getEvents. Parameters: users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
+        log.info("Starting getAll. Parameters: users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
                 users, states, categories, rangeStart, rangeEnd, from, size);
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.unsorted());
@@ -53,8 +53,8 @@ public class EventAdminController {
     }
 
     @PatchMapping("/{eventId}")
-    public EventFullDto update(@PathVariable Long eventId,
-                               @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
+    public EventFullDto adminUpdate(@PathVariable Long eventId,
+                                    @RequestBody @Valid UpdateEventAdminRequest updateEventAdminRequest) {
         log.info("Starting update for eventId: {}. Update request: {}", eventId, updateEventAdminRequest);
         if (updateEventAdminRequest.getEventDate() != null
                 && updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {

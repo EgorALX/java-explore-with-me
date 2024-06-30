@@ -7,13 +7,13 @@ import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.compilations.dto.UpdateCompilationRequest;
 
 public interface CompilationService {
-    List<CompilationDto> getCompilations(Boolean pined, PageRequest pageRequest);
+    List<CompilationDto> getAll(Boolean pined, PageRequest pageRequest);
 
-    CompilationDto getCompilation(Long compId);
+    CompilationDto getById(Long compId);
 
-    CompilationDto addCompilation(NewCompilationDto dto);
+    CompilationDto add(NewCompilationDto dto);
 
-    void deleteCompilation(Long compId);
+    void delete(Long compId);
 
-    CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest);
+    CompilationDto update(Long compId, UpdateCompilationRequest updateCompilationRequest);
 }
