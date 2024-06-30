@@ -70,7 +70,11 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto update(Long compId, UpdateCompilationRequest dto) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
-        HashSet<Event> events = new HashSet<>(eventRepository.findAllByIdIn(dto.getEvents()));
+        List<Long> ids = dto.getEvents();
+        if (ids == null) {
+            throw new NotFoundException("Events not found");
+        }
+        HashSet<Event> events = new HashSet<>(eventRepository.findAllByIdIn(ids));
         if (dto.getEvents() != null) {
             compilation.setEvents(events);
         }
