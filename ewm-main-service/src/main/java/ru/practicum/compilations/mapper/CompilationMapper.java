@@ -9,11 +9,8 @@ import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
 
 import java.util.HashSet;
-import java.util.List;
 import ru.practicum.events.repository.EventRepository;
 
-import java.util.ArrayList;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
