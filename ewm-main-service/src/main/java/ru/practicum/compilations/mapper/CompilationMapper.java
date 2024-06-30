@@ -7,10 +7,13 @@ import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.compilations.model.Compilation;
 import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
+
+import java.util.HashSet;
 import java.util.List;
 import ru.practicum.events.repository.EventRepository;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -29,9 +32,9 @@ public class CompilationMapper {
     }
 
     public Compilation toCompilation(NewCompilationDto dto) {
-        List<Event> events = new ArrayList<>();
+        HashSet<Event> events = new HashSet<>();
         if (dto.getEvents() != null) {
-            events = eventRepository.findAllById(dto.getEvents());
+            events = new HashSet<>(eventRepository.findAllById(dto.getEvents()));
         }
         Compilation compilation = new Compilation(
                 null,

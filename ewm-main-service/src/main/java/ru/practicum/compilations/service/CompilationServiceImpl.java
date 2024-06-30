@@ -1,5 +1,6 @@
 package ru.practicum.compilations.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +70,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto update(Long compId, UpdateCompilationRequest dto) {
         Compilation compilation = compilationRepository.findById(compId)
                 .orElseThrow(() -> new NotFoundException("Compilation not found"));
-        List<Event> events = eventRepository.findAllByIdIn(dto.getEvents());
+        HashSet<Event> events = new HashSet<>(eventRepository.findAllByIdIn(dto.getEvents()));
         if (dto.getEvents() != null) {
             compilation.setEvents(events);
         }
