@@ -7,11 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.*;
-import ru.practicum.events.service.EventServiceImpl;
+import ru.practicum.events.service.EventService;
 import ru.practicum.exception.model.ValidationException;
 import ru.practicum.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.requests.dto.ParticipationRequestDto;
+import ru.practicum.requests.service.RequestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -26,7 +27,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventPrivateController {
 
-    private final EventServiceImpl service;
+    private final EventService eventService;
+
+    private final RequestService requestService;
 
     @GetMapping
     public List<EventShortDto> getEventsByUser(
@@ -36,7 +39,7 @@ public class EventPrivateController {
         log.info("Starting getEventsByUser for userId: {}", userId);
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<EventShortDto> list = service.getEventsByUser(userId, pageRequest);
+        List<EventShortDto> list = eventService.getEventsByUser(userId, pageRequest);
         log.info("Finished getEventsByUser for userId: {}. Returning {} events.", userId, list.size());
         return list;
     }
@@ -49,7 +52,7 @@ public class EventPrivateController {
                 && dto.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("Date error");
         }
-        EventFullDto result = service.add(userId, dto);
+        EventFullDto result = eventService.add(userId, dto);
         log.info("Finished add for userId: {}. Result: {}", userId, result);
         return result;
     }
@@ -57,7 +60,7 @@ public class EventPrivateController {
     @GetMapping("/{eventId}")
     public EventFullDto getByUserAndEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         log.info("Starting getByUserAndEvent for userId: {} and eventId: {}", userId, eventId);
-        EventFullDto result = service.getByUserAndEvent(userId, eventId);
+        EventFullDto result = eventService.getByUserAndEvent(userId, eventId);
         log.info("Finished getByUserAndEvent for userId: {} and eventId: {}. Result: {}", userId, eventId, result);
         return result;
     }
@@ -73,7 +76,7 @@ public class EventPrivateController {
                 && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("Date error");
         }
-        EventFullDto result = service.update(userId, eventId, updateEventUserRequest);
+        EventFullDto result = eventService.updateByEvent(userId, eventId, updateEventUserRequest);
         log.info("Finished updateEvent for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
         return result;
     }
@@ -81,7 +84,7 @@ public class EventPrivateController {
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> getRequestsByUserAndEvent(@PathVariable Long userId, @PathVariable Long eventId) {
         log.info("Starting getRequestsByUserAndEvent for userId: {} and eventId: {}", userId, eventId);
-        List<ParticipationRequestDto> requests = service.getRequestsByUserAndEvent(userId, eventId);
+        List<ParticipationRequestDto> requests = requestService.getRequestsByUserAndEvent(userId, eventId);
         log.info("Finished getRequestsByUserAndEvent for userId: {} and eventId: {}. Found {} requests.", userId, eventId, requests.size());
         return requests;
     }
@@ -92,7 +95,7 @@ public class EventPrivateController {
             @PathVariable Long eventId,
             @RequestBody @Valid EventRequestStatusUpdateRequest statusUpdateRequest) {
         log.info("Starting updateStatus for userId: {}, eventId: {}. Status update request: {}", userId, eventId, statusUpdateRequest);
-        EventRequestStatusUpdateResult result = service.updateStatus(userId, eventId, statusUpdateRequest);
+        EventRequestStatusUpdateResult result = requestService.updateStatus(userId, eventId, statusUpdateRequest);
         log.info("Finished updateStatus for userId: {}, eventId: {}. Result: {}", userId, eventId, result);
         return result;
     }

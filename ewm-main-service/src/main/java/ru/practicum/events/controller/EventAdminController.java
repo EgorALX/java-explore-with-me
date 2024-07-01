@@ -62,7 +62,7 @@ public class EventAdminController {
                 && updateEventAdminRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(1))) {
             throw new ValidationException("Date error");
         }
-        EventFullDto updatedEvent = service.adminUpdate(eventId, updateEventAdminRequest);
+        EventFullDto updatedEvent = service.updateByEvent(eventId, updateEventAdminRequest);
         log.info("Finished update for eventId: {}. Updated event: {}", eventId, updatedEvent);
         return updatedEvent;
     }

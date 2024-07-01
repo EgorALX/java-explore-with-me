@@ -7,7 +7,6 @@ import ru.practicum.categories.model.Category;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.Event;
 import ru.practicum.location.model.Location;
-import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 
