@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.categories.mapper.CategoryMapper;
 import ru.practicum.categories.model.Category;
-import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.Event;
 import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
-import ru.practicum.exception.model.NotFoundException;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 
@@ -29,13 +27,7 @@ public class EventMapper {
 
     private final UserMapper userMapper;
 
-    private final CategoryRepository categoryRepository;
-
-    private final LocationRepository locationRepository;
-
-    public Event fromNewEventDtoToEvent(NewEventDto dto, Category category, User user) {
-
-        Location location = locationRepository.save(dto.getLocation());
+    public Event fromNewEventDtoToEvent(NewEventDto dto, Category category, User user, Location location) {
 
         return new Event(
                 0L,
@@ -116,12 +108,6 @@ public class EventMapper {
     public Event toUpdateEvent(Event event, UpdateEventUserRequest updateDto) {
         if (updateDto.getAnnotation() != null) {
             event.setAnnotation(updateDto.getAnnotation());
-        }
-        if (updateDto.getCategoryId() != null) {
-            Long id = updateDto.getCategoryId();
-            Category category = categoryRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Category " + id + " not found"));
-            event.setCategory(category);
         }
         if (updateDto.getDescription() != null) {
             event.setDescription(updateDto.getDescription());

@@ -20,6 +20,7 @@ import ru.practicum.exception.model.NotFoundException;
 import ru.practicum.exception.model.AccessException;
 import ru.practicum.exception.model.ValidationException;
 import ru.practicum.exception.model.ViolationException;
+import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.requests.dto.EventRequestStatusUpdateResult;
@@ -88,7 +89,8 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User " + userId + " not found"));
-        Event event = eventMapper.fromNewEventDtoToEvent(eventDto, category, user);
+        Location location = locationRepository.save(eventDto.getLocation());
+        Event event = eventMapper.fromNewEventDtoToEvent(eventDto, category, user, location);
         event.setCreatedOn(LocalDateTime.now());
         event.setState(PENDING);
         Event newEvent = eventRepository.save(event);
@@ -132,6 +134,12 @@ public class EventServiceImpl implements EventService {
                 default:
                     throw new NotFoundException("Unknown state : " + updateDto.getStateAction());
             }
+        }
+        if (updateDto.getCategoryId() != null) {
+            Long id = updateDto.getCategoryId();
+            Category category = categoryRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("Category " + id + " not found"));
+            event.setCategory(category);
         }
         Event updatedEvent = eventMapper.toUpdateEvent(event, updateDto);
         event = eventRepository.save(updatedEvent);
