@@ -55,7 +55,7 @@ public class EventServiceImpl implements EventService {
 
     private final LocationRepository locationRepository;
 
-    private final LocalDateTime MIN = LocalDateTime.of(2020, 1, 1, 0, 0);
+    private static final LocalDateTime MIN = LocalDateTime.of(2020, 1, 1, 0, 0);
 
     @Override
     @Transactional(readOnly = true)
