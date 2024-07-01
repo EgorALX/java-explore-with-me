@@ -3,6 +3,7 @@ package ru.practicum.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.HitDto;
 import ru.practicum.ViewStatsDto;
@@ -22,6 +23,7 @@ public class HitController {
     private static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void addHit(@Valid @RequestBody HitDto hitDto) {
         log.info("Adding hit with DTO: {}", hitDto);
         service.addHit(hitDto);
