@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.HitDto;
+import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.EventSort;
@@ -23,6 +25,8 @@ import java.util.List;
 public class EventPublicController {
 
     private final EventServiceImpl service;
+
+    private final StatsClient client;
 
     @GetMapping
     public List<EventShortDto> getAllPublished(
@@ -45,6 +49,7 @@ public class EventPublicController {
         PageRequest pageRequest = PageRequest.of(page, size);
         List<EventShortDto> events = service.getAllPublished(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort,
                 pageRequest, request);
+        addStats(request);
         log.info("Finished getAllPublished. Returned {} events.", events.size());
         return events;
     }
@@ -54,7 +59,17 @@ public class EventPublicController {
                                 HttpServletRequest request) {
         log.info("Starting getById for id: {}. Request: {}", id, request);
         EventFullDto event = service.getById(id, request);
+        addStats(request);
         log.info("Finished getById for id: {}. Result: {}", id, event);
         return event;
+    }
+
+    private void addStats(HttpServletRequest request) {
+        client.addHit(HitDto.builder()
+                .app("explore-with-me")
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build());
     }
 }

@@ -330,7 +330,6 @@ public class EventServiceImpl implements EventService {
                         .collect(Collectors.toList());
             default:
                 List<EventShortDto> result = eventMapper.toEventShortDtoList(events, viewStats, confirmedRequests);
-                addStats(request);
                 return result;
         }
     }
@@ -346,17 +345,6 @@ public class EventServiceImpl implements EventService {
         Map<Long, Long> viewStats = getViews(events);
         EventFullDto result = eventMapper.eventToFullDto(event, confirmedRequests.getOrDefault(eventId, 0L),
                 viewStats.getOrDefault(eventId, 0L));
-        addStats(request);
         return result;
     }
-
-    private void addStats(HttpServletRequest request) {
-        client.addHit(HitDto.builder()
-                .app("explore-with-me")
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(LocalDateTime.now())
-                .build());
-    }
-
 }
