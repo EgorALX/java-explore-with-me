@@ -3,6 +3,7 @@ package ru.practicum.events.service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.practicum.events.dto.*;
+import ru.practicum.events.model.EventParams;
 import ru.practicum.events.model.EventState;
 import ru.practicum.events.model.EventSort;
 import ru.practicum.requests.dto.EventRequestStatusUpdateRequest;
@@ -28,8 +29,7 @@ public interface EventService {
     EventRequestStatusUpdateResult updateStatus(Long userId, Long eventId,
                                                 EventRequestStatusUpdateRequest statusUpdateRequest);
 
-    List<EventFullDto> getEvents(List<Long> users, List<EventState> statesList, List<Long> categories, LocalDateTime rangeStart,
-                                 LocalDateTime rangeEnd, PageRequest pageRequest);
+    List<EventFullDto> getEvents(EventParams eventParams, PageRequest pageRequest);
 
     EventFullDto adminUpdate(Long eventId, UpdateEventAdminRequest updateEventDto);
 

@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.UpdateEventAdminRequest;
+import ru.practicum.events.model.EventParams;
 import ru.practicum.events.model.EventState;
 import ru.practicum.events.service.EventServiceImpl;
 import ru.practicum.exception.model.ValidationException;
@@ -47,7 +48,8 @@ public class EventAdminController {
                 statesList.add(addedState);
             }
         }
-        List<EventFullDto> fullDtoList = service.getEvents(users, statesList, categories, rangeStart, rangeEnd, pageRequest);
+        List<EventFullDto> fullDtoList = service.getEvents(new EventParams(users, statesList, categories, rangeStart,
+                rangeEnd), pageRequest);
         log.info("Finished getEvents. Returned {} events.", fullDtoList.size());
         return fullDtoList;
     }

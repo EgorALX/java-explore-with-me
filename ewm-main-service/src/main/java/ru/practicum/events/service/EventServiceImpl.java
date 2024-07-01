@@ -12,9 +12,7 @@ import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.mapper.EventMapper;
-import ru.practicum.location.mapper.LocationMapper;
 import ru.practicum.events.model.*;
-import ru.practicum.events.model.EventState;
 import ru.practicum.events.repository.*;
 import ru.practicum.exception.model.NotFoundException;
 import ru.practicum.exception.model.AccessException;
@@ -25,7 +23,6 @@ import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.requests.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.requests.dto.ParticipationRequestDto;
-import ru.practicum.requests.mapper.RequestMapper;
 import ru.practicum.requests.model.Request;
 import ru.practicum.requests.model.Status;
 import ru.practicum.requests.repository.RequestRepository;
@@ -47,8 +44,6 @@ import static ru.practicum.requests.model.Status.CONFIRMED;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
-    private final StatsClient statsClient;
-
     private final StatsClient client;
 
     private final EventRepository eventRepository;
@@ -63,11 +58,9 @@ public class EventServiceImpl implements EventService {
 
     private final RequestRepository requestRepository;
 
-    private final RequestMapper requestMapper;
-
     private final LocationRepository locationRepository;
 
-    private final LocationMapper locationMapper;
+    private final LocalDateTime MIN = LocalDateTime.of(2020, 1, 1, 0, 0);
 
     @Override
     @Transactional(readOnly = true)
@@ -173,7 +166,10 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event " + eventId + " not found"));
         return requestRepository.findAllByEvent(event).stream()
-                .map(requestMapper::toParticipationRequestDto).collect(Collectors.toList());
+                .map(request -> new ParticipationRequestDto(request.getId(), request.getCreated().format(DATE_TIME_FORMATTER),
+                        request.getEvent().getId(),
+                        request.getRequester().getId(),
+                        request.getStatus().toString())).collect(Collectors.toList());
     }
 
     private Map<Long, Long> getViews(List<Event> events) {
@@ -186,9 +182,8 @@ public class EventServiceImpl implements EventService {
             eventUrisAndIds.put(key, event.getId());
         }
         List<ViewStatsDto> stats = client.retrieveAllStats(
-                LocalDateTime.of(2020, 1, 1, 0, 0).format(DATE_TIME_FORMATTER),
-                LocalDateTime.of(2025, 12, 31, 23, 59, 59)
-                        .format(DATE_TIME_FORMATTER), List.copyOf(eventUrisAndIds.keySet()), true);
+                MIN.format(DATE_TIME_FORMATTER),
+                LocalDateTime.now().format(DATE_TIME_FORMATTER), List.copyOf(eventUrisAndIds.keySet()), true);
         Map<Long, Long> result = new HashMap<>();
         for (ViewStatsDto stat : stats) {
             if (eventUrisAndIds.containsKey(stat.getUri())) {
@@ -234,7 +229,22 @@ public class EventServiceImpl implements EventService {
             }
         }
         updatedRequests = requestRepository.saveAll(updatedRequests);
-        return requestMapper.toResult(updatedRequests);
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(
+                new ArrayList<>(), new ArrayList<>());
+        if (updatedRequests.isEmpty()) {
+            return result;
+        }
+        for (Request request : updatedRequests) {
+            ParticipationRequestDto dto = new ParticipationRequestDto(request.getId(),
+                    request.getCreated().format(DATE_TIME_FORMATTER), request.getEvent().getId(),
+                    request.getRequester().getId(), request.getStatus().toString());
+            if (request.getStatus().equals(Status.CONFIRMED)) {
+                result.getConfirmedRequests().add(dto);
+            } else if (request.getStatus().equals(Status.REJECTED)) {
+                result.getRejectedRequests().add(dto);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -258,7 +268,7 @@ public class EventServiceImpl implements EventService {
             event.setParticipantLimit(updateEventDto.getParticipantLimit());
         }
         if (updateEventDto.getLocation() != null) {
-            event.setLocation(locationRepository.save(locationMapper.toModel(updateEventDto.getLocation())));
+            event.setLocation(locationRepository.save(updateEventDto.getLocation()));
         }
         if (updateEventDto.getCategory() != null) {
             Category category = categoryRepository.findById(event.getCategory().getId()).orElseThrow(() ->
@@ -296,28 +306,27 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventFullDto> getEvents(List<Long> usersIds, List<EventState> states,
-                                        List<Long> categoriesIds, LocalDateTime start, LocalDateTime end,
-                                        PageRequest pageRequest) {
+    public List<EventFullDto> getEvents(EventParams eventParams, PageRequest pageRequest) {
         List<Specification<Event>> specifications = new ArrayList<>();
-        if (!states.isEmpty()) {
-            specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("state")).value(states));
+        if (!eventParams.getStates().isEmpty()) {
+            specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("state"))
+                    .value(eventParams.getStates()));
         }
-        if (!usersIds.isEmpty()) {
+        if (!eventParams.getUserIds().isEmpty()) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("initiator").get("id"))
-                    .value(usersIds));
+                    .value(eventParams.getUserIds()));
         }
-        if (!categoriesIds.isEmpty()) {
+        if (!eventParams.getCategoriesIds().isEmpty()) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("category").get("id"))
-                    .value(categoriesIds));
+                    .value(eventParams.getCategoriesIds()));
         }
-        if (start != null) {
+        if (eventParams.getStart() != null) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder
-                    .greaterThanOrEqualTo(root.get("eventDate"), start));
+                    .greaterThanOrEqualTo(root.get("eventDate"), eventParams.getStart()));
         }
-        if (end != null) {
+        if (eventParams.getEnd() != null) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder
-                    .lessThanOrEqualTo(root.get("eventDate"), end));
+                    .lessThanOrEqualTo(root.get("eventDate"), eventParams.getEnd()));
         }
 
         List<Event> events = eventRepository.findAll(specifications
@@ -410,7 +419,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private void addStats(HttpServletRequest request) {
-        statsClient.addHit(HitDto.builder()
+        client.addHit(HitDto.builder()
                 .app("explore-with-me")
                 .uri(request.getRequestURI())
                 .ip(request.getRemoteAddr())

@@ -13,12 +13,12 @@ import java.util.List;
 @Component
 public class RequestMapper {
 
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public ParticipationRequestDto toParticipationRequestDto(Request request) {
         return new ParticipationRequestDto(
                 request.getId(),
-                request.getCreated().format(formatter),
+                request.getCreated().format(DATE_TIME_FORMATTER),
                 request.getEvent().getId(),
                 request.getRequester().getId(),
                 request.getStatus().toString());
