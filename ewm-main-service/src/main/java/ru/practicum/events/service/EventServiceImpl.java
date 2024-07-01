@@ -335,6 +335,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    @Override
     @Transactional(readOnly = true)
     public EventFullDto getById(Long eventId, HttpServletRequest request) {
         Event event = eventRepository.findById(eventId)
