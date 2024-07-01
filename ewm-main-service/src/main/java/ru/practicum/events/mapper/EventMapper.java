@@ -31,8 +31,6 @@ public class EventMapper {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final StatsClient statsClient;
-
     private final CategoryMapper categoryMapper;
 
     private final UserMapper userMapper;
@@ -88,17 +86,17 @@ public class EventMapper {
         );
     }
 
-    public EventShortDto toEventShortDto(Event event) {
+    public EventShortDto toEventShortDto(Event event, Long views, Long confirmed) {
         return new EventShortDto(
                 event.getAnnotation(),
                 categoryMapper.toCategoryDto(event.getCategory()),
-                getConfirmedRequestsForEvent(event.getId()),
+                confirmed,
                 event.getEventDate().format(formatter),
                 event.getId(),
                 userMapper.toUserShortDto(event.getInitiator()),
                 event.getPaid(),
                 event.getTitle(),
-                getView(event.getId()));
+                views);
     }
 
     public List<EventShortDto> toEventShortDtoList(List<Event> events,
@@ -154,33 +152,5 @@ public class EventMapper {
             event.setTitle(updateDto.getTitle());
         }
         return event;
-    }
-
-    private Long getView(Long eventId) {
-        if (eventId == null || eventId <= 0) {
-            return null;
-        }
-        String uriKey = "/events/" + eventId;
-        List<ViewStatsDto> stats = statsClient.retrieveAllStats(
-                LocalDateTime.of(2020, 1, 1, 0, 0).format(DATE_TIME_FORMATTER),
-                LocalDateTime.of(2025, 12, 31, 23, 59, 59).format(DATE_TIME_FORMATTER), List.of(uriKey), true);
-        for (ViewStatsDto stat : stats) {
-            if (stat.getUri().equals(uriKey)) {
-                return stat.getHits();
-            }
-        }
-        return null;
-    }
-
-    private Long getConfirmedRequestsForEvent(Long eventId) {
-        if (eventId == null || eventId <= 0) {
-            return null;
-        }
-        List<Long> ids = List.of(eventId);
-        List<CountDto> confirmedRequests = requestRepository.findByStatus(ids, CONFIRMED);
-        if (confirmedRequests.isEmpty()) {
-            return null;
-        }
-        return confirmedRequests.get(0).getCount();
     }
 }

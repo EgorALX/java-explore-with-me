@@ -5,13 +5,16 @@ import org.springframework.stereotype.Component;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
 import ru.practicum.compilations.model.Compilation;
+import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import ru.practicum.events.repository.EventRepository;
 
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -21,9 +24,9 @@ public class CompilationMapper {
 
     private final EventMapper eventMapper;
 
-    public CompilationDto toCompilationDto(Compilation compilation) {
+    public CompilationDto toCompilationDto(Compilation compilation, List<EventShortDto> events) {
         return new CompilationDto(compilation.getId(),
-                compilation.getEvents().stream().map(eventMapper::toEventShortDto).collect(Collectors.toList()),
+                events,
                 compilation.getPinned(),
                 compilation.getTitle());
     }
@@ -33,12 +36,26 @@ public class CompilationMapper {
         if (dto.getEvents() != null) {
             events = new HashSet<>(eventRepository.findAllById(dto.getEvents()));
         }
-        Compilation compilation = new Compilation(
+        return new Compilation(
                 null,
                 dto.getPinned(),
                 dto.getTitle(),
                 events);
-        return compilation;
+    }
+
+    public List<CompilationDto> toCompilationDtoList(
+            List<Compilation> compilations,
+            Map<Long, Long> confirmed,
+            Map<Long, Long> views) {
+        List<CompilationDto> result = new ArrayList<>();
+        for (Compilation compilation : compilations) {
+            CompilationDto compilationDto = new CompilationDto(compilation.getId(),
+                    eventMapper.toEventShortDtoList(new ArrayList<>(compilation.getEvents()), views, confirmed),
+                    compilation.getPinned(),
+                    compilation.getTitle());
+            result.add(compilationDto);
+        }
+        return result;
     }
 
 }
