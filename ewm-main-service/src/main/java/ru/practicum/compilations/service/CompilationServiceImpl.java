@@ -130,7 +130,11 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto add(NewCompilationDto dto) {
-        Compilation compilation = compilationMapper.toCompilation(dto);
+        HashSet<Event> events = new HashSet<>();
+        if (dto.getEvents() != null) {
+            events = new HashSet<>(eventRepository.findAllById(dto.getEvents()));
+        }
+        Compilation compilation = compilationMapper.toCompilation(dto, events);
 
         Set<Event> allEvents = compilation.getEvents();
         Map<Long, Long> views = getViews(allEvents);

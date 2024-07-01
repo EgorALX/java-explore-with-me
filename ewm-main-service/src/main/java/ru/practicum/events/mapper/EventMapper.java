@@ -2,28 +2,22 @@ package ru.practicum.events.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.ViewStatsDto;
 import ru.practicum.categories.mapper.CategoryMapper;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoryRepository;
-import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.Event;
 import ru.practicum.location.model.Location;
 import ru.practicum.location.repository.LocationRepository;
 import ru.practicum.exception.model.NotFoundException;
-import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.List;
-
-import static ru.practicum.requests.model.Status.CONFIRMED;
 
 @Component
 @RequiredArgsConstructor
@@ -37,11 +31,7 @@ public class EventMapper {
 
     private final CategoryRepository categoryRepository;
 
-    private final RequestRepository requestRepository;
-
     private final LocationRepository locationRepository;
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Event fromNewEventDtoToEvent(NewEventDto dto, Category category, User user) {
 
