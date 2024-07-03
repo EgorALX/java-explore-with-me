@@ -274,32 +274,30 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getAllPublished(String text, List<Long> categories, Boolean paid,
-                                               LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable,
-                                               EventSort sort, PageRequest pageRequest, HttpServletRequest request) {
+    public List<EventShortDto> getAllPublished(GetEventsRequest getEventsRequest, PageRequest pageRequest) {
         List<Specification<Event>> specifications = new ArrayList<>();
         specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("state"))
                 .value(List.of(PUBLISHED)));
-        if (!text.isBlank()) {
-            String searchText = "%" + text.toLowerCase() + "%";
+        if (!getEventsRequest.getText().isBlank()) {
+            String searchText = "%" + getEventsRequest.getText().toLowerCase() + "%";
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.or(
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), searchText),
                     criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), searchText)));
         }
-        if (!categories.isEmpty()) {
+        if (!getEventsRequest.getCategories().isEmpty()) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.in(root.get("category").get("id"))
-                    .value(categories));
+                    .value(getEventsRequest.getCategories()));
         }
-        if (paid != null) {
-            specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("paid"), paid));
+        if (getEventsRequest.getPaid() != null) {
+            specifications.add((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("paid"), getEventsRequest.getPaid()));
         }
-        if (rangeStart != null) {
+        if (getEventsRequest.getRangeStart() != null) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder
-                    .greaterThanOrEqualTo(root.get("eventDate"), rangeStart));
+                    .greaterThanOrEqualTo(root.get("eventDate"), getEventsRequest.getRangeStart()));
         }
-        if (rangeEnd != null) {
+        if (getEventsRequest.getRangeEnd() != null) {
             specifications.add((root, query, criteriaBuilder) -> criteriaBuilder
-                    .lessThanOrEqualTo(root.get("eventDate"), rangeEnd));
+                    .lessThanOrEqualTo(root.get("eventDate"), getEventsRequest.getRangeEnd()));
         }
         specifications = specifications.stream().filter(Objects::nonNull).collect(Collectors.toList());
         Specification<Event> s = specifications
@@ -308,15 +306,16 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAll(s, pageRequest).toList();
 
         Map<Long, Long> confirmedRequests = getConfirmedRequests(events);
-        if (onlyAvailable) {
+        if (getEventsRequest.getOnlyAvailable()) {
             events = events
                     .stream()
                     .filter(event -> event.getParticipantLimit() > confirmedRequests.getOrDefault(event.getId(), 0L))
                     .collect(Collectors.toList());
         }
         Map<Long, Long> viewStats = getViews(events);
-        if (sort == null) return eventMapper.toEventShortDtoList(events, viewStats, confirmedRequests);
-        switch (sort) {
+        if (getEventsRequest.getSort() == null)
+            return eventMapper.toEventShortDtoList(events, viewStats, confirmedRequests);
+        switch (getEventsRequest.getSort()) {
             case VIEWS:
                 events = events
                         .stream()

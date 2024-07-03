@@ -10,6 +10,7 @@ import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.EventFullDto;
 import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.events.model.EventSort;
+import ru.practicum.events.model.GetEventsRequest;
 import ru.practicum.events.service.EventServiceImpl;
 import ru.practicum.exception.model.ValidationException;
 
@@ -47,8 +48,8 @@ public class EventPublicController {
         }
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<EventShortDto> events = service.getAllPublished(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort,
-                pageRequest, request);
+        List<EventShortDto> events = service.getAllPublished(
+                new GetEventsRequest(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort), pageRequest);
         addStats(request);
         log.info("Finished getAllPublished. Returned {} events.", events.size());
         return events;

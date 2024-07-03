@@ -4,10 +4,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.EventParams;
-import ru.practicum.events.model.EventSort;
+import ru.practicum.events.model.GetEventsRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -24,9 +23,7 @@ public interface EventService {
 
     EventFullDto updateByEvent(Long eventId, UpdateEventAdminRequest updateEventDto);
 
-    List<EventShortDto> getAllPublished(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart,
-                                        LocalDateTime rangeEnd, Boolean onlyAvailable, EventSort sort,
-                                        PageRequest pageRequest, HttpServletRequest request);
+    List<EventShortDto> getAllPublished(GetEventsRequest getEventsRequest, PageRequest pageRequest);
 
     EventFullDto getById(Long id, HttpServletRequest request);
 }
