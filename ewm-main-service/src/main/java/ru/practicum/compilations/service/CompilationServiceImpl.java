@@ -70,19 +70,10 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Map<Long, Long> getConfirmedRequests(Set<Event> events) {
-        if (events.isEmpty()) {
-            return Collections.emptyMap();
-        }
-        List<Long> ids = new ArrayList<>();
-        for (Event event : events) {
-            ids.add(event.getId());
-        }
-        List<Object[]> rawResults = requestRepository.findRawByStatus(ids, CONFIRMED);
-        List<CountDto> confirmedRequests = rawResults.stream()
-                .map(result -> new CountDto((Long) result[0], (Long) result[1]))
-                .collect(Collectors.toList());
-        return confirmedRequests.stream()
-                .collect(Collectors.toMap(CountDto::getId, CountDto::getCount));
+        if (events.isEmpty()) return Collections.emptyMap();
+        List<Long> ids = events.stream().map(Event::getId).collect(Collectors.toList());
+        List<CountDto> confirmedRequests = requestRepository.findByStatus(ids, CONFIRMED);
+        return confirmedRequests.stream().collect(Collectors.toMap(CountDto::getEventId, CountDto::getCount));
     }
 
     private Map<Long, Long> getViews(Set<Event> events) {

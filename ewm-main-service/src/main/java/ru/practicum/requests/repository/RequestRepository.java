@@ -15,15 +15,10 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     List<Request> findAllByIdInAndStatusIs(List<Long> requestIds, Status status);
 
-    @Query("SELECT r.event.id AS eventId, COUNT(r.id) AS count FROM Request r " +
-            "WHERE r.status = :status AND r.event.id IN (SELECT id FROM Event WHERE id IN (:ids)) " +
-            "GROUP BY r.event.id")
-    List<CountDto> findByStatus(@Param("ids") List<Long> ids, @Param("status") Status status);
-
-    @Query("SELECT r.event.id AS eventId, COUNT(r.id) AS count FROM Request r " +
-            "WHERE r.status = :status AND r.event.id IN (SELECT id FROM Event WHERE id IN (:ids)) " +
-            "GROUP BY r.event.id")
-    List<Object[]> findRawByStatus(@Param("ids") List<Long> ids, @Param("status") Status status);
+    @Query("SELECT new ru.practicum.events.dto.CountDto(r.event.id, COUNT(r.id) AS count) " +
+            "FROM Request AS r WHERE r.status IS (:status) AND r.event.id IN (:ids) GROUP BY r.event")
+    List<CountDto> findByStatus(@Param("ids") List<Long> ids,
+                                @Param("status") Status status);
 
     List<Request> findAllByEvent(Event event);
 

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class CountDto {
 
-    private Long id;
+    private Long eventId;
 
     private Long count;
 }
