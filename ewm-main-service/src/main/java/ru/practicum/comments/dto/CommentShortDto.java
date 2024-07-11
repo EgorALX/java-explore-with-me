@@ -17,7 +17,7 @@ public class CommentShortDto {
 
     private String text;
 
-    private UserShortDto user;
+    private UserShortDto author;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private String createdOn;

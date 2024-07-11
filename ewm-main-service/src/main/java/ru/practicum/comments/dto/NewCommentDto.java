@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewCommentDTO {
+public class NewCommentDto {
 
     @NotNull
     private Long eventId;

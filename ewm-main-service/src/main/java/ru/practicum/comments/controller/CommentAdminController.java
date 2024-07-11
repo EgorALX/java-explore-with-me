@@ -1,6 +1,5 @@
 package ru.practicum.comments.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -31,23 +30,23 @@ public class CommentAdminController {
         log.info("Deleted comment with ID: {}", commentId);
     }
 
-    @GetMapping("/users/{userId}")
-    public List<CommentShortDto> getAuthorComments(@PathVariable @Positive Long userId,
+    @GetMapping("/users/{authorId}")
+    public List<CommentShortDto> getAuthorComments(@PathVariable @Positive Long authorId,
                                                    @RequestParam(defaultValue = "0") int from,
                                                    @RequestParam(defaultValue = "10") int size) {
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.unsorted());
-        log.info("Fetching author comments for user ID: {}. Pagination: page={}, size={}", userId, page, size);
-        List<CommentShortDto> comments = commentService.getAuthorComments(userId, pageRequest);
-        log.info("Fetched {} comments for user ID: {}", comments.size(), userId);
+        log.info("Fetching author comments for user ID: {}. Pagination: page={}, size={}", authorId, page, size);
+        List<CommentShortDto> comments = commentService.getAuthorComments(authorId, pageRequest);
+        log.info("Fetched {} comments for user ID: {}", comments.size(), authorId);
         return comments;
     }
 
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/users/{authorId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAuthorComments(@PathVariable @Positive Long userId) {
-        log.info("Deleting all comments for user ID: {}", userId);
-        commentService.deleteUserComments(userId);
-        log.info("Deleted all comments for user ID: {}", userId);
+    public void deleteAuthorComments(@PathVariable @Positive Long authorId) {
+        log.info("Deleting all comments for user ID: {}", authorId);
+        commentService.deleteAutorComments(authorId);
+        log.info("Deleted all comments for user ID: {}", authorId);
     }
 }

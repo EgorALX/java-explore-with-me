@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.events.dto.EventShortDto;
 import ru.practicum.users.dto.UserShortDto;
 
 @Data
@@ -20,7 +19,7 @@ public class CommentDto {
 
     private UserShortDto author;
 
-    private EventShortDto event;
+    private Long eventId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private String createdOn;

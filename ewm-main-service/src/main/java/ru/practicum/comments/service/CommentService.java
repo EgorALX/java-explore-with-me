@@ -3,15 +3,15 @@ package ru.practicum.comments.service;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.comments.dto.CommentDto;
 import ru.practicum.comments.dto.CommentShortDto;
-import ru.practicum.comments.dto.NewCommentDTO;
-import ru.practicum.comments.dto.UpdateCommentDTO;
+import ru.practicum.comments.dto.NewCommentDto;
+import ru.practicum.comments.dto.UpdateCommentDto;
 
 import java.util.List;
 
 public interface CommentService {
-    CommentDto addComment(NewCommentDTO newCommentDTO, Long userId);
+    CommentDto addComment(NewCommentDto newCommentDTO, Long userId);
 
-    CommentDto updateComment(UpdateCommentDTO updateCommentDTO, Long userId, Long commentId);
+    CommentDto updateComment(UpdateCommentDto updateCommentDto, Long userId, Long commentId);
 
     void deleteUserComment(Long userId, Long commentId);
 
@@ -23,5 +23,5 @@ public interface CommentService {
 
     List<CommentShortDto> getAuthorComments(Long userId, PageRequest pageRequest);
 
-    void deleteUserComments(Long userId);
+    void deleteAutorComments(Long userId);
 }

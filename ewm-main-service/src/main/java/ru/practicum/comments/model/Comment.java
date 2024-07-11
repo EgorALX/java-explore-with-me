@@ -30,7 +30,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User author;
 
     @Column(name = "created_on")
     private LocalDateTime created;
