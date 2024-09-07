@@ -1,4 +1,8 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+Explore With Me: дипломный проект курса Java-разработчик Яндекс практикума. 
 
-https://github.com/EgorALX/java-explore-with-me/pull/3
+Стек проекта:
+Java 11, Spring Boot, Lombok, PostgreSQL, Spring Data JPA, Hibernate, H2.
+
+Описание:
+Созданное приложение - афиша. В этой афише можно предложить какое-либо событие от выставки до похода в кино и собрать компанию для участия в нём.
